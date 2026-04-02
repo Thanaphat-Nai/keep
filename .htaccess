@@ -1,0 +1,38 @@
+RewriteEngine On
+
+# =========================
+# FORCE HTTPS + REMOVE WWW
+# =========================
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^ https://mwit-tracker.lnwza36.click%{REQUEST_URI} [L,R=301]
+
+# =========================
+# REDIRECT ROOT OR index.html TO submit.php
+# =========================
+RewriteCond %{THE_REQUEST} \s/+index\.html [NC,OR]
+RewriteCond %{REQUEST_URI} ^/$
+RewriteRule ^(index\.html)?$ https://mwit-tracker.lnwza36.click/submit.php [L,R=301]
+
+# =========================
+# PREVENT DIRECTORY LISTING
+# =========================
+Options -Indexes
+
+# =========================
+# BLOCK DIRECT ACCESS TO JSON FILES
+# =========================
+<FilesMatch "\.(json)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# =========================
+# BASIC SECURITY HEADERS
+# =========================
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
